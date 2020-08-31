@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Room</string>
+    <string name="words">wrods</string>
+    <string name="add">add</string>
+    <string name="delete">delete</string>
+    <string name="update">update</string>
+    <string name="query">query</string>
+</resources>
