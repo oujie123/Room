@@ -3,22 +3,31 @@ package com.gacrnd.gcs.room;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.savedstate.SavedStateRegistryOwner;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.gacrnd.gcs.room.database.Word;
 
 import java.util.List;
 
+/**
+ * LinearLayoutManager 线性的
+ * GridLayoutManager 网格的，即二位的
+ */
 public class MainActivity extends AppCompatActivity {
 
     private WordViewModel wordViewModel;
-    private TextView wordsShow;
-    private Button add, delete, update, query;
+    private RecyclerView recyclerView;
+    private MyAdapter myAdapter1;
+    private MyAdapter myAdapter2;
+    private Button add, delete;
+    private Switch aSwitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,42 +39,54 @@ public class MainActivity extends AppCompatActivity {
         wordViewModel.getallWordsLive().observe(this, new Observer<List<Word>>() {
             @Override
             public void onChanged(List<Word> words) {
-                if (words.isEmpty()) {
-                    wordsShow.setText("");
-                }
-                final StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < words.size(); i++) {
-                    Word word = words.get(i);
-                    builder.append(word.getId() + ":" + word.getWord() + "->" + word.getChineseMeaning() + "\n");
-                    wordsShow.setText(builder.toString());
-                }
+                myAdapter1.setAllWords(words);
+                myAdapter2.setAllWords(words);
+                //通知刷新界面
+                myAdapter1.notifyDataSetChanged();
+                myAdapter2.notifyDataSetChanged();
             }
         });
     }
 
     private void initView() {
-        wordsShow = findViewById(R.id.words);
+        myAdapter1 = new MyAdapter(false);
+        myAdapter2 = new MyAdapter(true);
+        recyclerView = findViewById(R.id.words);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(myAdapter1);
         add = findViewById(R.id.add);
         delete = findViewById(R.id.delete);
-        update = findViewById(R.id.update);
-        query = findViewById(R.id.query);
+        aSwitch = findViewById(R.id.switch1);
+
+        aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b){
+                    recyclerView.setAdapter(myAdapter2);
+                } else {
+                    recyclerView.setAdapter(myAdapter1);
+                }
+            }
+        });
 
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 switch (view.getId()) {
                     case R.id.add:
-                        Word word = new Word("apple", "苹果");
-                        wordViewModel.insertWords(word, word);
+                        String[] english = new String[]{
+                                "cpx", "yxx", "oj", "oywy", "wls", "slj", "hdj", "lxp", "fwd", "crd", "zs", "hxj", "tj"
+                        };
+                        String[] chinese = new String[]{
+                                "谌鹏翔", "杨筱筱", "欧杰", "欧阳文彧", "伍令胜", "宋灵杰", "何东健", "李晓平", "符伟达", "陈锐东", "张舜", "何小军", "汤剑"
+                        };
+                        for (int i = 0; i < english.length; i++) {
+                            Word word = new Word(english[i], chinese[i]);
+                            wordViewModel.insertWords(word, word);
+                        }
                         break;
                     case R.id.delete:
                         wordViewModel.deleteAllWords();
-                        break;
-                    case R.id.update:
-
-                        break;
-                    case R.id.query:
-
                         break;
                     default:
                 }
@@ -73,7 +94,5 @@ public class MainActivity extends AppCompatActivity {
         };
         add.setOnClickListener(listener);
         delete.setOnClickListener(listener);
-        update.setOnClickListener(listener);
-        query.setOnClickListener(listener);
     }
 }

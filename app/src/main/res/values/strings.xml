@@ -5,4 +5,9 @@
     <string name="delete">delete</string>
     <string name="update">update</string>
     <string name="query">query</string>
+    <string name="cell_content_id">1</string>
+    <string name="cell_english_name">words</string>
+    <string name="cell_chinese_name">单词</string>
+    <string name="card_view">CardView</string>
+    <string name="click_tips">click_tips</string>
 </resources>
