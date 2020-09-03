@@ -35,6 +35,10 @@ public class WordsRepository {
         new DeleteAllAsycTask(wordDao).execute();
     }
 
+    public void updateWords(Word... words){
+        new UpdateAsycTask(wordDao).execute(words);
+    }
+
     //第二个参数是报告进度，第三个是报告结果
     static class InsertAsycTask extends AsyncTask<Word,Void,Void> {
         private WordDao wordDao;

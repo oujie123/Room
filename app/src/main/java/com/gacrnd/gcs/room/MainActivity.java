@@ -1,6 +1,7 @@
 package com.gacrnd.gcs.room;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -12,7 +13,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.gacrnd.gcs.room.database.Demo;
 import com.gacrnd.gcs.room.database.Word;
+import com.gacrnd.gcs.room.database.WordDatabase;
 
 import java.util.List;
 
@@ -33,9 +36,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initView();
         //如果是AndroidViewModel用这个工厂来创建AndroidViewModelFactory
         wordViewModel = new ViewModelProvider(this, new ViewModelProvider.AndroidViewModelFactory(this.getApplication())).get(WordViewModel.class);
+        initView(wordViewModel);
         wordViewModel.getallWordsLive().observe(this, new Observer<List<Word>>() {
             @Override
             public void onChanged(List<Word> words) {
@@ -48,9 +51,9 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void initView() {
-        myAdapter1 = new MyAdapter(false);
-        myAdapter2 = new MyAdapter(true);
+    private void initView(WordViewModel viewModel) {
+        myAdapter1 = new MyAdapter(false, viewModel);
+        myAdapter2 = new MyAdapter(true, viewModel);
         recyclerView = findViewById(R.id.words);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(myAdapter1);
@@ -61,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b){
+                if (b) {
                     recyclerView.setAdapter(myAdapter2);
                 } else {
                     recyclerView.setAdapter(myAdapter1);

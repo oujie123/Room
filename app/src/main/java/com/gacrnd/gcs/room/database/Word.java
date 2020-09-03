@@ -16,10 +16,20 @@ public class Word {
     private String word;
     @ColumnInfo(name = "chinese_meaning")
     private String chineseMeaning;
+    @ColumnInfo(name = "show_data")
+    private boolean show;
 
     public Word(String word, String chineseMeaning) {
         this.word = word;
         this.chineseMeaning = chineseMeaning;
+    }
+
+    public boolean isShow() {
+        return show;
+    }
+
+    public void setShow(boolean show) {
+        this.show = show;
     }
 
     public int getId() {

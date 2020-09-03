@@ -36,5 +36,7 @@ public class WordViewModel extends AndroidViewModel {
         return wordsRepository.getAllWordsLive();
     }
 
-
+    public void updateWords(Word... words){
+        wordsRepository.updateWords(words);
+    }
 }
